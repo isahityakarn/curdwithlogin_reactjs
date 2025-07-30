@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import CaptchaForm from './CaptchaForm';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -31,7 +32,6 @@ const Login = () => {
 
   const validateForm = () => {
     const newErrors = {};
-
     if (!formData.email) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
@@ -90,7 +90,7 @@ const Login = () => {
               </div>
             )}
 
-            <form onSubmit={handleSubmit}>
+            {/* <form onSubmit={handleSubmit}> */}
               <div className="mb-3">
                 <label htmlFor="email" className="form-label">
                   Email Address
@@ -133,6 +133,11 @@ const Login = () => {
                 )}
               </div>
 
+              {/* CAPTCHA Verification */}
+              <div className="mb-3">
+                <CaptchaForm />
+              </div>
+
               <button
                 type="submit"
                 className="btn btn-primary w-100"
@@ -147,7 +152,7 @@ const Login = () => {
                   'Login'
                 )}
               </button>
-            </form>
+            {/* </form> */}
 
             <div className="text-center mt-3">
               <p className="mb-0">
