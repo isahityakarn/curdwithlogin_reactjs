@@ -91,9 +91,7 @@ const ForgotPassword = () => {
       if (!isCaptchaVerified) {
         if (!captchaInputValue.trim()) {
           setMessage('Please enter the CAPTCHA code in the input box.');
-        } else {
-          setMessage('CAPTCHA verification failed. Please try again or reload the CAPTCHA.');
-        }
+        } 
         return;
       }
     }
@@ -136,8 +134,8 @@ const ForgotPassword = () => {
         }
       }
     } catch (error) {
-      if (error.response && error.response.data && error.response.data.message) {
-        setMessage(error.response.data.message);
+      if (error.response && error.response.data && error.response.data.error) {
+        setMessage(error.response.data.error);
       } else {
         setMessage('An error occurred. Please try again.');
       }

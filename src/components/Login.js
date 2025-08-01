@@ -12,12 +12,17 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
+  const [captchaInputValue, setCaptchaInputValue] = useState('');
 
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleCaptchaVerification = (isVerified) => {
     setIsCaptchaVerified(isVerified);
+  };
+
+  const handleCaptchaInputChange = (value) => {
+    setCaptchaInputValue(value);
   };
 
   const handleChange = (e) => {
@@ -63,7 +68,9 @@ const Login = () => {
     }
 
     if (!isCaptchaVerified) {
-      setMessage('Please verify the CAPTCHA before logging in.');
+      if (!captchaInputValue.trim()) {
+        setMessage('Please verify the CAPTCHA before logging in.');
+      } 
       return;
     }
 
@@ -141,7 +148,10 @@ const Login = () => {
               </div>
 
               <div className="mb-3">
-                <CaptchaForm onCaptchaVerified={handleCaptchaVerification} />
+                <CaptchaForm 
+                  onCaptchaVerified={handleCaptchaVerification}
+                  onInputChange={handleCaptchaInputChange}
+                />
               </div>
 
               <button

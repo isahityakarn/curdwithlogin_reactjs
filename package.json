@@ -25,7 +25,9 @@
     "eject": "react-scripts eject",
     "server": "nodemon server.js",
     "dev-server": "nodemon server.js",
-    "backend": "nodemon server.js"
+    "backend": "nodemon server.js",
+    "dev-info": "./dev-start.sh",
+    "dev-status": "ps aux | grep -E '(react-scripts|nodemon|server.js)' | grep -v grep"
   },
   "eslintConfig": {
     "extends": [

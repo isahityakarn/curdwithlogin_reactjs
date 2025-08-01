@@ -15,7 +15,7 @@ const Navbar = () => {
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
       <div className="container">
         <Link className="navbar-brand" to="/">
-          <strong>MyApp</strong>
+          <strong>My Full work</strong>
         </Link>
         
         <button 
