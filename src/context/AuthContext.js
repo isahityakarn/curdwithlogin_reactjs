@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
         setUser(data.user);
         return { success: true, message: 'Login successful' };
       } else {
-        return { success: false, message: data.message || 'Login failed' };
+        return { success: false, message: data.error || 'Login failed' };
       }
     } catch (error) {
       return { success: false, message: 'Network error. Please try again.' };
