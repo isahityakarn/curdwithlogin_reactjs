@@ -3,10 +3,11 @@ import axios from 'axios';
 import { encryptPayload } from '../utils/encrypt';
 import CaptchaCanvas from './CaptchaCanvas';
 
-const CaptchaForm = () => {
+const CaptchaForm = ({ onCaptchaVerified, onInputChange }) => {
   const [userInput, setUserInput] = useState("");
   const [token, setToken] = useState('');
   const [message, setMessage] = useState('');
+  const [isVerified, setIsVerified] = useState(false);
 
   const getBrowserInfo = () => ({
     userAgent: navigator.userAgent,
@@ -17,6 +18,12 @@ const CaptchaForm = () => {
   const handleCaptchaGenerated = async (newCaptcha) => {
     const browserInfo = getBrowserInfo();
     const encrypted = encryptPayload({ captcha: newCaptcha, browserInfo });
+
+    setIsVerified(false);
+    setUserInput('');
+    if (onCaptchaVerified) {
+      onCaptchaVerified(false);
+    }
 
     try {
       const res = await axios.post('http://localhost:5050/api/users/getCaptchaRequest', {
@@ -35,6 +42,12 @@ const CaptchaForm = () => {
   };
 
   const handleSubmit = async () => {
+    // Check if input is blank
+    if (!userInput.trim()) {
+      setMessage('Please enter the CAPTCHA code.');
+      return;
+    }
+
     const browserInfo = getBrowserInfo();
     const encrypted = encryptPayload({ captcha: userInput, browserInfo, token });
 
@@ -44,20 +57,50 @@ const CaptchaForm = () => {
       });
 
       setMessage(res.data.message);
+      
+      if (res.data.success) {
+        setIsVerified(true);
+        if (onCaptchaVerified) {
+          onCaptchaVerified(true);
+        }
+      } else {
+        setIsVerified(false);
+        if (onCaptchaVerified) {
+          onCaptchaVerified(false);
+        }
+      }
     } catch (err) {
       setMessage('Verification failed.');
+      setIsVerified(false);
+      if (onCaptchaVerified) {
+        onCaptchaVerified(false);
+      }
     }
   };
 
   return (
     <div style={{ padding: 20 }}>
-      {/* <h3>CAPTCHA Verification</h3> */}
       <CaptchaCanvas onCaptchaGenerated={handleCaptchaGenerated} />
       <input
         type="text"
-        placeholder="Enter CAPTCHA"
+        placeholder="Enter 6-character CAPTCHA"
         value={userInput}
-        onChange={(e) => setUserInput(e.target.value)}
+        onChange={(e) => {
+          const value = e.target.value;
+          if (/^[a-zA-Z0-9]{0,6}$/.test(value)) {
+            setUserInput(value);
+            if (onInputChange) {
+              onInputChange(value);
+            }
+            if (isVerified) {
+              setIsVerified(false);
+              if (onCaptchaVerified) {
+                onCaptchaVerified(false);
+              }
+            }
+          }
+        }}
+        maxLength={6}
         style={{ marginTop: 10 }}
       />
       <button onClick={handleSubmit} style={{ marginLeft: 10 }}>Verify</button>

@@ -11,9 +11,14 @@ const Login = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  const handleCaptchaVerification = (isVerified) => {
+    setIsCaptchaVerified(isVerified);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,7 +26,6 @@ const Login = () => {
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -51,12 +55,15 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Clear previous messages
     setMessage('');
     
     if (!validateForm()) {
-      // Show validation error message
       setMessage('Please fix the errors below before submitting.');
+      return;
+    }
+
+    if (!isCaptchaVerified) {
+      setMessage('Please verify the CAPTCHA before logging in.');
       return;
     }
 
@@ -90,7 +97,7 @@ const Login = () => {
               </div>
             )}
 
-            {/* <form onSubmit={handleSubmit}> */}
+            <form onSubmit={handleSubmit}>
               <div className="mb-3">
                 <label htmlFor="email" className="form-label">
                   Email Address
@@ -133,28 +140,34 @@ const Login = () => {
                 )}
               </div>
 
-              {/* CAPTCHA Verification */}
               <div className="mb-3">
-                <CaptchaForm />
+                <CaptchaForm onCaptchaVerified={handleCaptchaVerification} />
               </div>
 
               <button
                 type="submit"
                 className="btn btn-primary w-100"
-                disabled={loading}
+                disabled={loading || !isCaptchaVerified}
               >
                 {loading ? (
                   <>
                     <span className="spinner-border spinner-border-sm me-2" role="status"></span>
                     Logging in...
                   </>
-                ) : (
+                ) : isCaptchaVerified ? (
                   'Login'
+                ) : (
+                  'Verify CAPTCHA First'
                 )}
               </button>
-            {/* </form> */}
+            </form>
 
             <div className="text-center mt-3">
+              <p className="mb-2">
+                <Link to="/forgot-password" className="text-decoration-none">
+                  Forgot your password?
+                </Link>
+              </p>
               <p className="mb-0">
                 Don't have an account?{' '}
                 <Link to="/register" className="text-decoration-none">
