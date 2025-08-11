@@ -1,20 +1,51 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import logo from '../images/header/lo.jpg'; // Adjust the path as necessary
+
+// Optionally, you can use a library to generate QR codes as base64, or use a static QR code image
+// For demonstration, let's use a static QR code image import (replace with dynamic if needed)
+import qrImg from '../images/header/qr.jpeg'; // Place a QR code image in this path
 
 export default function generateNocPdf(nocData) {
   const cert = nocData.certificate || {};
   const doc = new jsPDF();
-  doc.setFontSize(12);
-  doc.text('Annexure-9: Format of No Objection Certificate', 10, 12);
+  const yStart = 20;
+
+  // Beautiful header: logo left, QR right
+  const headerY = 10;
+  const logoWidth = 120;
+  const logoHeight = 18;
+  const qrWidth = 24;
+  const qrHeight = 24;
+  const pageWidth = doc.internal.pageSize.getWidth();
+
+  // Draw logo (left)
+  try {
+    doc.addImage(logo, 'JPEG', 10, headerY, logoWidth, logoHeight);
+  } catch (e) {}
+
+  // Draw QR code (right)
+  try {
+    doc.addImage(qrImg, 'PNG', pageWidth - qrWidth - 10, headerY, qrWidth, qrHeight);
+  } catch (e) {}
+
+  // Draw a line under the header
+  doc.setDrawColor(180);
+  doc.setLineWidth(0.5);
+  doc.line(10, headerY + Math.max(logoHeight, qrHeight) + 2, pageWidth - 10, headerY + Math.max(logoHeight, qrHeight) + 2);
+
+  // Title below header
+  const titleY = headerY + Math.max(logoHeight, qrHeight) + 10;
+  doc.setFontSize(14);
   doc.setFont(undefined, 'bold');
-  doc.text('No Objection Certificate', 80, 22);
+  doc.text('No Objection Certificate', pageWidth / 2, titleY, { align: 'center' });
   doc.setFont(undefined, 'normal');
   doc.setFontSize(10);
   doc.text(
     `This is to certify that the State/UT Directorate has no objection to ${cert.institute_name || ''}, located at ${cert.complete_address || ''}, applying under <Category: ${cert.category || ''}> for affiliation with the Directorate General of Training (DGT), New Delhi for the following trade(s) and unit(s) subject to fulfillment of DGT affiliation norms:`,
-    10, 32, { maxWidth: 190 }
+    10, titleY + 10, { maxWidth: 190 }
   );
-  let y = 52;
+  let y = titleY + 30;
   doc.setFont(undefined, 'bold');
   doc.text('Name of the institute:', 10, y);
   doc.setFont(undefined, 'normal');
@@ -29,7 +60,6 @@ export default function generateNocPdf(nocData) {
   doc.text('(*Complete old and New Address of the institute in case of Shifting or Relocation of existing ITI)', 12, y);
   doc.setFontSize(10);
   y += 8;
-  doc.setFont(undefined, 'bold');
   doc.text('Application Number/MIS code:', 10, y);
   doc.setFont(undefined, 'normal');
   doc.text((cert.application_number || '') + (cert.mis_code ? ' / ' + cert.mis_code : '') || '_________________________', 65, y);
