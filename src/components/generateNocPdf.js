@@ -46,29 +46,48 @@ export default function generateNocPdf() {
     10, titleY + 10, { maxWidth: 190 }
   );
   let y = titleY + 30;
-  doc.setFont(undefined, 'bold');
-  doc.text('Name of the institute:', 10, y);
-  doc.setFont(undefined, 'normal');
-  doc.text(cert.institute_name || '_________________________________________', 60, y);
-  y += 8;
-  doc.setFont(undefined, 'bold');
-  doc.text('Complete Address* of Institute:', 10, y);
-  doc.setFont(undefined, 'normal');
-  doc.text(cert.complete_address || '_________________________________________', 70, y);
-  y += 8;
-  doc.setFontSize(8);
-  doc.text('(*Complete old and New Address of the institute in case of Shifting or Relocation of existing ITI)', 12, y);
-  doc.setFontSize(10);
-  y += 8;
-  doc.text('Application Number/MIS code:', 10, y);
-  doc.setFont(undefined, 'normal');
-  doc.text((cert.application_number || '') + (cert.mis_code ? ' / ' + cert.mis_code : '') || '_________________________', 65, y);
-  y += 8;
-  doc.setFont(undefined, 'bold');
-  doc.text('Category of application:', 10, y);
-  doc.setFont(undefined, 'normal');
-  doc.text(cert.category || '_________________________', 65, y);
-  y += 8;
+  // Table for institute details
+  autoTable(doc, {
+    startY: y,
+    body: [
+      [
+        { content: 'Name of the Organization:', styles: { fontStyle: 'bold' } },
+        cert.institute_name || ''
+      ],
+      [
+        { content: 'Full Address of the Institute*: (*Complete the old and new address of the institute in case of transfer or transfer of existing ITI)', styles: { fontStyle: 'bold' } },
+        cert.complete_address || ''
+      ],  
+        
+      [
+        { content: 'Application Number/MIS Code:', styles: { fontStyle: 'bold' } },
+        (cert.application_number || '') + (cert.mis_code ? ' / ' + cert.mis_code : '')
+      ],
+      [
+        { content: 'Category of Application:', styles: { fontStyle: 'bold' } },
+        cert.category || ''
+      ],
+    ],
+    theme: 'grid',
+    styles: { fontSize: 11, cellPadding: 3 },
+    columnStyles: { 0: { cellWidth: 80 }, 1: { cellWidth: 100 } },
+    didParseCell: function (data) {
+      // Make the 'Full Address of the Institute*:' label partially red
+      if (data.row.index === 1 && data.column.index === 0) {
+        data.cell.text = ['Full Address ', 'of the Institute*:'];
+        data.cell.styles.fontStyle = 'bold';
+      }
+      if (data.row.index === 2 && data.column.index === 0) {
+        // data.cell.styles.textColor = [255,0,0];
+        data.cell.styles.fontStyle = 'bold';
+      }
+      if (data.row.index === 3 && data.column.index === 0) {
+        // data.cell.styles.textColor = [255,0,0];
+        data.cell.styles.fontStyle = 'bold';
+      }
+    }
+  });
+  y = doc.lastAutoTable.finalY + 2;
   autoTable(doc, {
     startY: y,
     head: [['S. No.', 'Trade Name', 'Number of Units in Shift I', 'Number of Units in Shift II']],
