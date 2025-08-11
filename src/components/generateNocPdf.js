@@ -2,11 +2,14 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import logo from '../images/header/lo.jpg';
 import qrImg from '../images/header/qr.jpeg';
+import dataForNOC from './noc.json';
 
-export default function generateNocPdf(nocData) {
-  const cert = nocData.certificate || {};
+
+
+export default function generateNocPdf() {
+// Fetch data from noc.json and generate PDF
+  const cert = dataForNOC.certificate || {};
   const doc = new jsPDF();
-  const yStart = 20;
 
   // Beautiful header: logo left, QR right
   const headerY = 10;
@@ -63,6 +66,8 @@ export default function generateNocPdf(nocData) {
   y += 8;
   doc.setFont(undefined, 'bold');
   doc.text('Category of application:', 10, y);
+  doc.setFont(undefined, 'normal');
+  doc.text(cert.category || '_________________________', 65, y);
   y += 8;
   autoTable(doc, {
     startY: y,
