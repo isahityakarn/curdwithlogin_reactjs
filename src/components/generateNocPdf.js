@@ -7,11 +7,9 @@ import dataForNOC from './noc.json';
 
 
 export default function generateNocPdf() {
-// Fetch data from noc.json and generate PDF
   const cert = dataForNOC.certificate || {};
   const doc = new jsPDF();
 
-  // Beautiful header: logo left, QR right
   const headerY = 10;
   const logoWidth = 120;
   const logoHeight = 18;
@@ -19,22 +17,18 @@ export default function generateNocPdf() {
   const qrHeight = 24;
   const pageWidth = doc.internal.pageSize.getWidth();
 
-  // Draw logo (left)
   try {
     doc.addImage(logo, 'JPEG', 10, headerY, logoWidth, logoHeight);
   } catch (e) {}
 
-  // Draw QR code (right)
   try {
     doc.addImage(qrImg, 'PNG', pageWidth - qrWidth - 10, headerY, qrWidth, qrHeight);
   } catch (e) {}
 
-  // Draw a line under the header
   doc.setDrawColor(180);
   doc.setLineWidth(0.5);
   doc.line(10, headerY + Math.max(logoHeight, qrHeight) + 2, pageWidth - 10, headerY + Math.max(logoHeight, qrHeight) + 2);
 
-  // Title below header
   const titleY = headerY + Math.max(logoHeight, qrHeight) + 10;
   doc.setFontSize(14);
   doc.setFont(undefined, 'bold');
@@ -46,7 +40,6 @@ export default function generateNocPdf() {
     10, titleY + 10, { maxWidth: 190 }
   );
   let y = titleY + 30;
-  // Table for institute details
   autoTable(doc, {
     startY: y,
     body: [
@@ -72,17 +65,14 @@ export default function generateNocPdf() {
     styles: { fontSize: 11, cellPadding: 3 },
     columnStyles: { 0: { cellWidth: 80 }, 1: { cellWidth: 100 } },
     didParseCell: function (data) {
-      // Make the 'Full Address of the Institute*:' label partially red
       if (data.row.index === 1 && data.column.index === 0) {
         data.cell.text = ['Full Address ', 'of the Institute*:'];
         data.cell.styles.fontStyle = 'bold';
       }
       if (data.row.index === 2 && data.column.index === 0) {
-        // data.cell.styles.textColor = [255,0,0];
         data.cell.styles.fontStyle = 'bold';
       }
       if (data.row.index === 3 && data.column.index === 0) {
-        // data.cell.styles.textColor = [255,0,0];
         data.cell.styles.fontStyle = 'bold';
       }
     }
