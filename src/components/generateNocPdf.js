@@ -1,10 +1,7 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import logo from '../images/header/lo.jpg'; // Adjust the path as necessary
-
-// Optionally, you can use a library to generate QR codes as base64, or use a static QR code image
-// For demonstration, let's use a static QR code image import (replace with dynamic if needed)
-import qrImg from '../images/header/qr.jpeg'; // Place a QR code image in this path
+import logo from '../images/header/lo.jpg';
+import qrImg from '../images/header/qr.jpeg';
 
 export default function generateNocPdf(nocData) {
   const cert = nocData.certificate || {};
