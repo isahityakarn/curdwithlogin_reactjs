@@ -11,7 +11,7 @@ export default function useNocData(nocId) {
     setError(null);
     axios.get(`http://localhost:5050/api/noc/${nocId}`)
       .then(res => {
-        console.log(res.data);
+        // console.log(res.data);
         setNocData(res.data);
         setLoading(false);
       })
