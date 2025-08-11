@@ -48,7 +48,7 @@ export default function generateNocPdf() {
         cert.institute_name || ''
       ],
       [
-        { content: 'Full Address of the Institute*: (*Complete the old and new address of the institute in case of transfer or transfer of existing ITI)', styles: { fontStyle: 'bold' } },
+        { content: 'Full Address of the Institute*: ', styles: { fontStyle: 'bold' } },
         cert.complete_address || ''
       ],  
         
@@ -66,7 +66,7 @@ export default function generateNocPdf() {
     columnStyles: { 0: { cellWidth: 80 }, 1: { cellWidth: 100 } },
     didParseCell: function (data) {
       if (data.row.index === 1 && data.column.index === 0) {
-        data.cell.text = ['Full Address ', 'of the Institute*:'];
+        data.cell.text = ['Full Address of the Institute*:'];
         data.cell.styles.fontStyle = 'bold';
       }
       if (data.row.index === 2 && data.column.index === 0) {
@@ -105,9 +105,24 @@ export default function generateNocPdf() {
   y += 10;
   doc.text('The issuance of this NOC does not, in itself, guarantee the accreditation or affiliation of the institute. The institute must fully comply with all applicable norms, procedures, and guidelines as prescribed for affiliation and accreditation.', 10, y, { maxWidth: 190 });
   y += 18;
-  doc.text('Signature', 10, y);
-  doc.text('State Director, (State Name)', 120, y);
-  y += 8;
-  doc.text('Date', 10, y);
+  // Signature, State Director, and Date on the right
+  const rightX = pageWidth - 70;
+  doc.setFont(undefined, 'bold');
+  doc.text('Signature', rightX, y);
+  // Add signature image if available
+  if (cert.signature) {
+    try {
+      doc.addImage(cert.signature, 'PNG', rightX, y + 2, 40, 18);
+      y += 20;
+    } catch (e) {}
+  }
+  doc.setFont(undefined, 'normal');
+  doc.text(`State Director, (${cert.state_name || ''})`, rightX, y + 8);
+  y += 16;
+  // Show current date
+  const today = new Date();
+  const dateStr = today.getDate().toString().padStart(2, '0') + '/' +
+    (today.getMonth() + 1).toString().padStart(2, '0') + '/' + today.getFullYear();
+  doc.text('Date: ' + dateStr, rightX, y);
   doc.save('No_Objection_Certificate.pdf');
 }

@@ -11,6 +11,8 @@
     "expiry_date": "2026-01-18T18:30:00.000Z",
     "status": "active",
     "remarks": "Certificate for institute relocation",
+    "signature": "../images/header/sign.png",
+    "state_director": "Shri Danish Aggarwal",
     "created_at": "2025-08-08T11:34:33.000Z",
     "updated_at": "2025-08-08T11:34:33.000Z",
     "trades": [
