@@ -3,6 +3,7 @@ import autoTable from 'jspdf-autotable';
 import logo from '../images/header/lo.jpg';
 import dgt from '../images/header/dgt.png';
 import iti from '../images/header/iti.png';
+import skillindia from '../images/header/skill-india.png';
 import qrImg from '../images/header/qr.jpeg';
 import dataForNOC from './noc.json';
 
@@ -11,30 +12,53 @@ export default function generateNocPdf() {
   const cert = dataForNOC.certificate || {};
   const doc = new jsPDF();
 
+
   const headerY = 10;
-  const logoWidth = 120;
-  const logoHeight = 18;
-  const qrWidth = 24;
-  const qrHeight = 24;
+  const logoWidth = 70;
+  const logoHeight = 24;
+  const dgtWidth = 28;
+  const dgtHeight = 18;
+  const itiWidth = 22;
+  const itiHeight = 18;
+  const skillWidth = 28;
+  const skillHeight = 18;
+  const qrWidth = 20;
+  const qrHeight = 18;
+  const imgGap = 6;
   const pageWidth = doc.internal.pageSize.getWidth();
 
-  // Arrange header images horizontally: logo, dgt, iti
-  const imgGap = 8;
-  let imgX = 10;
+
+  // Align all images to the same bottom line (bottom = headerY + qrHeight)
+  const headerBottom = headerY + qrHeight;
+  // Logo
+  const logoY = headerBottom - logoHeight;
   try {
-    doc.addImage(logo, 'JPEG', imgX, headerY, 32, logoHeight);
-    imgX += 32 + imgGap;
+    doc.addImage(logo, 'JPEG', 10, logoY, logoWidth, logoHeight);
   } catch (e) {}
+
+  // DGT
+  let rightImgX = pageWidth - (dgtWidth + itiWidth + skillWidth + qrWidth + imgGap * 3) - 10;
+  const dgtY = headerBottom - dgtHeight;
   try {
-    doc.addImage(dgt, 'JPEG', imgX, headerY, 32, logoHeight);
-    imgX += 32 + imgGap;
+    doc.addImage(dgt, 'JPEG', rightImgX, dgtY, dgtWidth, dgtHeight);
   } catch (e) {}
+  rightImgX += dgtWidth + imgGap;
+  // ITI
+  const itiY = headerBottom - itiHeight;
   try {
-    doc.addImage(iti, 'JPEG', imgX, headerY, 32, logoHeight);
-    imgX += 32 + imgGap;
+    doc.addImage(iti, 'JPEG', rightImgX, itiY, itiWidth, itiHeight);
   } catch (e) {}
+  rightImgX += itiWidth + imgGap;
+  // Skill India
+  const skillY = headerBottom - skillHeight;
   try {
-    doc.addImage(qrImg, 'PNG', pageWidth - qrWidth - 10, headerY, qrWidth, qrHeight);
+    doc.addImage(skillindia, 'JPEG', rightImgX, skillY, skillWidth, skillHeight);
+  } catch (e) {}
+  rightImgX += skillWidth + imgGap;
+  // QR
+  const qrY = headerY;
+  try {
+    doc.addImage(qrImg, 'PNG', rightImgX, qrY, qrWidth, qrHeight);
   } catch (e) {}
 
   doc.setDrawColor(180);
@@ -48,7 +72,7 @@ export default function generateNocPdf() {
   doc.setFont(undefined, 'normal');
   doc.setFontSize(10);
   doc.text(
-    `This is to certify that the State/UT Directorate has no objection to ${cert.institute_name || ''}, located at ${cert.complete_address || ''}, applying under <Category: ${cert.category || ''}> for affiliation with the Directorate General of Training (DGT), New Delhi for the following trade(s) and unit(s) subject to fulfillment of DGT affiliation norms:`,
+    `This is to certify that the State/UT Directorate has no objection to ${cert.institute_name || ''}, located at ${cert.complete_address || ''}, applying under Category: ${cert.category || ''} for affiliation with the Directorate General of Training (DGT), New Delhi for the following trade(s) and unit(s) subject to fulfillment of DGT affiliation norms:`,
     10, titleY + 10, { maxWidth: 190 }
   );
   let y = titleY + 30;
