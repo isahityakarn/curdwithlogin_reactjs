@@ -139,25 +139,25 @@ export default function generateNocPdf() {
   y += 10;
   doc.text('The issuance of this NOC does not, in itself, guarantee the accreditation or affiliation of the institute. The institute must fully comply with all applicable norms, procedures, and guidelines as prescribed for affiliation and accreditation.', 10, y, { maxWidth: 190 });
   y += 18;
-  // Signature, State Director, and Date on the right
-  const rightX = pageWidth - 100;
 
+  // Signature, State Director, and Date on the far right (minimal right space)
+  const rightPadding = 10;
+  const rightX = pageWidth - rightPadding;
   const imgUrl = `/header/${cert.signature}`;
-
-  doc.addImage(imgUrl, 'PNG', rightX, y, 40, 18);
+  doc.addImage(imgUrl, 'PNG', rightX - 40, y, 40, 18); // align image right edge
   y += 19;
   doc.setFont(undefined, 'bold');
-  doc.text('Signature', rightX, y);
+  doc.text('Signature', rightX, y, { align: 'right' });
   y += 10;
   doc.setFont(undefined, 'bold');
-  doc.text(cert.state_director || '', rightX, y);
+  doc.text(cert.state_director || '', rightX, y, { align: 'right' });
   doc.setFont(undefined, 'normal');
-  doc.text(`State Director, (${cert.state_name || ''})`, rightX, y + 8);
+  doc.text(`State Director, (${cert.state_name || ''})`, rightX, y + 8, { align: 'right' });
   y += 20;
   // Show current date
   const today = new Date();
   const dateStr = today.getDate().toString().padStart(2, '0') + '/' +
     (today.getMonth() + 1).toString().padStart(2, '0') + '/' + today.getFullYear();
-  doc.text('Date: ' + dateStr, rightX, y);
+  doc.text('Date: ' + dateStr, rightX, y, { align: 'right' });
   doc.save('No_Objection_Certificate.pdf');
 }
