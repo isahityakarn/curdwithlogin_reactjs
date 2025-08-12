@@ -1,9 +1,8 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import logo from '../images/header/lo.jpg';
-import dgt from '../images/header/dgt.png';
-import iti from '../images/header/iti.png';
-import skillindia from '../images/header/skill-india.png';
+import logo from '../images/header1/msde111.png';
+
+import statelogo from '../images/header1/statelogo.png';
 import qrImg from '../images/header/qr.jpeg';
 import dataForNOC from './noc.json';
 
@@ -14,58 +13,53 @@ export default function generateNocPdf() {
 
 
   const headerY = 10;
-  const logoWidth = 70;
-  const logoHeight = 24;
-  const dgtWidth = 28;
-  const dgtHeight = 18;
-  const itiWidth = 22;
-  const itiHeight = 18;
-  const skillWidth = 28;
-  const skillHeight = 18;
-  const qrWidth = 20;
-  const qrHeight = 18;
+
+  const fixedHeight = 22;
   const imgGap = 6;
   const pageWidth = doc.internal.pageSize.getWidth();
 
+  // Helper to get image width for fixed height
+  function getImgWidth(img, fallbackWidth = 22) {
+    try {
+      const image = new window.Image();
+      image.src = img;
+      if (image.width && image.height) {
+        return (image.width / image.height) * fixedHeight;
+      }
+    } catch (e) {}
+    return fallbackWidth;
+  }
 
-  // Align all images to the same bottom line (bottom = headerY + qrHeight)
-  const headerBottom = headerY + qrHeight;
-  // Logo
-  const logoY = headerBottom - logoHeight;
+  // Calculate widths
+  const logoWidth = getImgWidth(logo, 122);
+
+  const skillWidth = getImgWidth(statelogo, 28);
+  const qrWidth = getImgWidth(qrImg, 20);
+
+  const headerBottom = headerY + fixedHeight;
+  // Logo on the far left
   try {
-    doc.addImage(logo, 'JPEG', 10, logoY, logoWidth, logoHeight);
+    doc.addImage(logo, 'JPEG', 10, headerBottom - fixedHeight, logoWidth, fixedHeight);
   } catch (e) {}
 
-  // DGT
-  let rightImgX = pageWidth - (dgtWidth + itiWidth + skillWidth + qrWidth + imgGap * 3) - 10;
-  const dgtY = headerBottom - dgtHeight;
+  // statelogo and qrImg on the far right
+  const imgGapRight = 16;
+  const imgGapBetween = 10;
+  const totalImgsWidth = skillWidth + imgGapBetween + qrWidth;
+  let imgX = pageWidth - imgGapRight - totalImgsWidth;
   try {
-    doc.addImage(dgt, 'JPEG', rightImgX, dgtY, dgtWidth, dgtHeight);
+    doc.addImage(statelogo, 'PNG', imgX, headerBottom - fixedHeight, skillWidth, fixedHeight);
   } catch (e) {}
-  rightImgX += dgtWidth + imgGap;
-  // ITI
-  const itiY = headerBottom - itiHeight;
+  imgX += skillWidth + imgGapBetween;
   try {
-    doc.addImage(iti, 'JPEG', rightImgX, itiY, itiWidth, itiHeight);
-  } catch (e) {}
-  rightImgX += itiWidth + imgGap;
-  // Skill India
-  const skillY = headerBottom - skillHeight;
-  try {
-    doc.addImage(skillindia, 'JPEG', rightImgX, skillY, skillWidth, skillHeight);
-  } catch (e) {}
-  rightImgX += skillWidth + imgGap;
-  // QR
-  const qrY = headerY;
-  try {
-    doc.addImage(qrImg, 'PNG', rightImgX, qrY, qrWidth, qrHeight);
+    doc.addImage(qrImg, 'PNG', imgX, headerBottom - fixedHeight, qrWidth, fixedHeight);
   } catch (e) {}
 
   doc.setDrawColor(180);
   doc.setLineWidth(0.5);
-  doc.line(10, headerY + Math.max(logoHeight, qrHeight) + 2, pageWidth - 10, headerY + Math.max(logoHeight, qrHeight) + 2);
+  doc.line(10, headerY + fixedHeight + 2, pageWidth - 10, headerY + fixedHeight + 2);
 
-  const titleY = headerY + Math.max(logoHeight, qrHeight) + 10;
+  const titleY = headerY + fixedHeight + 10;
   doc.setFontSize(14);
   doc.setFont(undefined, 'bold');
   doc.text('No Objection Certificate', pageWidth / 2, titleY, { align: 'center' });
