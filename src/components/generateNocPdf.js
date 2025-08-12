@@ -2,7 +2,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import logo from '../images/header1/msde111.png';
 
-import statelogo from '../images/header1/statelogo.png';
+// import statelogo from '../images/header1/statelogo.png';
 import qrImg from '../images/header/qr.jpeg';
 import dataForNOC from './noc.json';
 
@@ -15,7 +15,7 @@ export default function generateNocPdf() {
   const headerY = 10;
 
   const fixedHeight = 22;
-  const imgGap = 6;
+ 
   const pageWidth = doc.internal.pageSize.getWidth();
 
   // Helper to get image width for fixed height
@@ -29,6 +29,10 @@ export default function generateNocPdf() {
     } catch (e) {}
     return fallbackWidth;
   }
+
+
+   const statelogo = `/header/${cert.state_logo}`;
+   console.log(statelogo);
 
   // Calculate widths
   const logoWidth = getImgWidth(logo, 122);
