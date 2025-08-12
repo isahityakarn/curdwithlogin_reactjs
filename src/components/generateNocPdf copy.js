@@ -1,10 +1,9 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import logo from '../images/header/lo.jpg';
-import dgt from '../images/header/dgt.png';
-import iti from '../images/header/iti.png';
 import qrImg from '../images/header/qr.jpeg';
 import dataForNOC from './noc.json';
+import signImg from '../images/header/sign.png';
 
 
 export default function generateNocPdf() {
@@ -18,21 +17,10 @@ export default function generateNocPdf() {
   const qrHeight = 24;
   const pageWidth = doc.internal.pageSize.getWidth();
 
-  // Arrange header images horizontally: logo, dgt, iti
-  const imgGap = 8;
-  let imgX = 10;
   try {
-    doc.addImage(logo, 'JPEG', imgX, headerY, 32, logoHeight);
-    imgX += 32 + imgGap;
+    doc.addImage(logo, 'JPEG', 10, headerY, logoWidth, logoHeight);
   } catch (e) {}
-  try {
-    doc.addImage(dgt, 'JPEG', imgX, headerY, 32, logoHeight);
-    imgX += 32 + imgGap;
-  } catch (e) {}
-  try {
-    doc.addImage(iti, 'JPEG', imgX, headerY, 32, logoHeight);
-    imgX += 32 + imgGap;
-  } catch (e) {}
+
   try {
     doc.addImage(qrImg, 'PNG', pageWidth - qrWidth - 10, headerY, qrWidth, qrHeight);
   } catch (e) {}
@@ -119,9 +107,19 @@ export default function generateNocPdf() {
   y += 18;
   // Signature, State Director, and Date on the right
   const rightX = pageWidth - 100;
-
-  const imgUrl = `/header/${cert.signature}`;
-
+  // Add signature image above 'Signature' if available
+//   if (cert.signature) {
+//     try {
+//       doc.addImage(cert.signature, 'png', rightX, y, 40, 18);
+//       y += 20;
+//     } catch (e) {}
+//   }
+  // Add signature image above 'Signature' if available
+ 
+  // console.log("Data comming from josn :"+cert.signature);
+  // console.log("Data comming from Local :"+signImg);
+  const imgUrl = `../images/header/${cert.signature}`;
+  // doc.addImage('../images/header/' + cert.signature, 'PNG', rightX, y, 40, 18);
   doc.addImage(imgUrl, 'PNG', rightX, y, 40, 18);
   y += 19;
   doc.setFont(undefined, 'bold');
