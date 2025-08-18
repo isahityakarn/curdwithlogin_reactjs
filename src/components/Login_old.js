@@ -51,22 +51,20 @@ const Login = () => {
     }
     setLoading(true);
     try {
+      const bodyData = loginType === 'email'
+        ? { email: formData.identifier, type: loginType }
+        : { phone: formData.identifier, type: loginType };
       const response = await fetch('http://localhost:5050/api/login/loginwithotp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          email: formData.identifier,
-          type: loginType
-        })
+        body: JSON.stringify(bodyData)
       });
       const result = await response.json();
       console.log("welcome : "+formData.identifier);
 
       if (result.message) {
-        // console.log("hi");
-
         setMessage('OTP sent successfully!');
         setOtpSent(true);
       } else {
@@ -88,10 +86,13 @@ const Login = () => {
     }
     setLoading(true);
     try {
+      const bodyData = loginType === 'email'
+        ? { email: formData.identifier, otp, type: loginType }
+        : { phone: formData.identifier, otp, type: loginType };
       const response = await fetch('http://localhost:5050/api/login/verifylogin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: formData.identifier, otp, type: loginType })
+        body: JSON.stringify(bodyData)
       });
       const data = await response.json();
       if (data.message) {
