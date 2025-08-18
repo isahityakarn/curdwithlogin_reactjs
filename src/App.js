@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import Login from './components/Login_old';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
+import Scurtiny from './components/Scurtiny';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -27,6 +28,7 @@ function App() {
                   <Dashboard />
                 </ProtectedRoute>
               } />
+              <Route path="/scurtiny" element={<Scurtiny />} />
               <Route path="/" element={<Navigate to="/login" />} />
             </Routes>
           </div>
