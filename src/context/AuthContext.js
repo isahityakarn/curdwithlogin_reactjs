@@ -1,6 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
+  // Login with OTP (for Login_old.js)
+  // const loginWithOtp = (token, user) => {
+  //   localStorage.setItem('token', token);
+  //   localStorage.setItem('user', JSON.stringify(user));
+  //   setIsAuthenticated(true);
+  //   setUser(user);
+  // };
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -14,6 +21,14 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Login with OTP (for Login_old.js)
+  const loginWithOtp = (token, user) => {
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
+    setIsAuthenticated(true);
+    setUser(user);
+  };
 
   useEffect(() => {
     // Check if user is logged in on app start
@@ -112,6 +127,7 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated,
     user,
     login,
+    loginWithOtp,
     register,
     logout,
     loading

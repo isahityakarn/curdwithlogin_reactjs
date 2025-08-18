@@ -21,7 +21,7 @@
         "id": 7,
         "noc_id": 3,
         "trade_name": "Electrician",
-        "shift_1_units": 24,
+        "shift_1_units": 4,
         "shift_2_units": 0,
         "created_at": "2025-08-08T11:34:33.000Z"
       },
@@ -29,15 +29,15 @@
         "id": 8,
         "noc_id": 3,
         "trade_name": "Fitter",
-        "shift_1_units": 20,
-        "shift_2_units": 20,
+        "shift_1_units": 4,
+        "shift_2_units": 0,
         "created_at": "2025-08-08T11:34:33.000Z"
       },
       {
         "id": 9,
         "noc_id": 3,
         "trade_name": "Turner",
-        "shift_1_units": 16,
+        "shift_1_units": 0,
         "shift_2_units": 0,
         "created_at": "2025-08-08T11:34:33.000Z"
       }
