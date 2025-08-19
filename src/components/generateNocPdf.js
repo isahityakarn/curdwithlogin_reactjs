@@ -1,67 +1,52 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import logo from '../images/header1/msde111.png';
+// import logo from '../images/header1/msde111.png';
 
 // import statelogo from '../images/header1/statelogo.png';
 import qrImg from '../images/header/qr.jpeg';
+import logo from '../images/header1/header.png';
 import dataForNOC from './noc.json';
 
 
 export default function generateNocPdf() {
   const cert = dataForNOC.certificate || {};
   const doc = new jsPDF();
-
-
   const headerY = 10;
-
   const fixedHeight = 22;
- 
   const pageWidth = doc.internal.pageSize.getWidth();
 
-  // Helper to get image width for fixed height
-  function getImgWidth(img, fallbackWidth = 22) {
-    try {
-      const image = new window.Image();
-      image.src = img;
-      if (image.width && image.height) {
-        return (image.width / image.height) * fixedHeight;
-      }
-    } catch (e) {}
-    return fallbackWidth;
-  }
+  // Draw header background
+  doc.setFillColor(189, 211, 223); // light blue
+  doc.rect(0, 0, pageWidth, 26, 'F');
 
+  // Draw logo (centered horizontally and vertically in header)
+  const logoWidth = 200;
+  const logoHeight = 22;
+  const headerHeight = 22;
+  const logoX = pageWidth / 2 - logoWidth / 2;
+  const logoY = (headerHeight - logoHeight) / 2;
+  doc.addImage(logo, 'JPEG', logoX, logoY, logoWidth, logoHeight);
 
-   const statelogo = `/header/${cert.state_logo}`;
-   console.log(statelogo);
+  // English text (left)
+  // doc.setFont('helvetica', 'bold');
+  // doc.setFontSize(15);
+  // doc.text('Directorate Technical Education', 12, 14);
+  // doc.setFont('helvetica', 'normal');
+  // doc.setFontSize(10);
+  // doc.text('Government of Madhya Pradesh', 12, 22);
 
-  // Calculate widths
-  const logoWidth = getImgWidth(logo, 122);
+  // Hindi text (right)
+  // doc.setFont('times', 'bold');
+  // doc.setFontSize(18);
+  // doc.text('तकनीकी शिक्षा संचालनालय', pageWidth - 12, 14, { align: 'right' });
+  // doc.setFont('times', 'normal');
+  // doc.setFontSize(12);
+  // doc.text('मध्यप्रदेश शासन', pageWidth - 12, 22, { align: 'right' });
 
-  const skillWidth = getImgWidth(statelogo, 28);
-  const qrWidth = getImgWidth(qrImg, 20);
-
-  const headerBottom = headerY + fixedHeight;
-  // Logo on the far left
-  try {
-    doc.addImage(logo, 'JPEG', 10, headerBottom - fixedHeight, logoWidth, fixedHeight);
-  } catch (e) {}
-
-  // statelogo and qrImg on the far right
-  const imgGapRight = 16;
-  const imgGapBetween = 10;
-  const totalImgsWidth = skillWidth + imgGapBetween + qrWidth;
-  let imgX = pageWidth - imgGapRight - totalImgsWidth;
-  try {
-    doc.addImage(statelogo, 'PNG', imgX, headerBottom - fixedHeight, skillWidth, fixedHeight);
-  } catch (e) {}
-  imgX += skillWidth + imgGapBetween;
-  try {
-    doc.addImage(qrImg, 'PNG', imgX, headerBottom - fixedHeight, qrWidth, fixedHeight);
-  } catch (e) {}
-
-  doc.setDrawColor(180);
-  doc.setLineWidth(0.5);
-  doc.line(10, headerY + fixedHeight + 2, pageWidth - 10, headerY + fixedHeight + 2);
+  // Continue with the rest of the PDF content
+  // doc.setDrawColor(180);
+  // doc.setLineWidth(0.5);
+  // doc.line(10, headerY + fixedHeight + 2, pageWidth - 10, headerY + fixedHeight + 2);
 
   const titleY = headerY + fixedHeight + 10;
   doc.setFontSize(14);
@@ -69,6 +54,12 @@ export default function generateNocPdf() {
   doc.text('No Objection Certificate', pageWidth / 2, titleY, { align: 'center' });
   doc.setFont(undefined, 'normal');
   doc.setFontSize(10);
+    // Add today's date on the right side of the header
+    const todayHeader = new Date();
+    const dateHeaderStr = todayHeader.getDate().toString().padStart(2, '0') + '/' +
+      (todayHeader.getMonth() + 1).toString().padStart(2, '0') + '/' + todayHeader.getFullYear();
+    doc.setFontSize(12);
+    doc.text('Date: ' + dateHeaderStr, pageWidth - 12, titleY, { align: 'right' });
   doc.text(
     `This is to certify that the State/UT Directorate has no objection to ${cert.institute_name || ''}, located at ${cert.complete_address || ''}, applying under Category: ${cert.category || ''} for affiliation with the Directorate General of Training (DGT), New Delhi for the following trade(s) and unit(s) subject to fulfillment of DGT affiliation norms:`,
     10, titleY + 10, { maxWidth: 190 }
