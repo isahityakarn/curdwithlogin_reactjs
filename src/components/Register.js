@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
+import CaptchaCanvas from './CaptchaCanvas';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
+  const [captcha, setCaptcha] = useState('');
+  const [captchaInput, setCaptchaInput] = useState('');
+  const [captchaError, setCaptchaError] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -19,17 +23,22 @@ const Register = () => {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
+
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({
+    if (name === 'captchaInput') {
+      setCaptchaInput(value);
+      if (captchaError) setCaptchaError('');
+    } else {
+      setFormData(prev => ({
         ...prev,
-        [name]: ''
+        [name]: value
       }));
+      if (errors[name]) {
+        setErrors(prev => ({
+          ...prev,
+          [name]: ''
+        }));
+      }
     }
   };
 
@@ -66,33 +75,38 @@ const Register = () => {
       newErrors.confirmPassword = 'Passwords do not match';
     }
 
+    // Captcha validation
+    if (!captchaInput) {
+      setCaptchaError('Please enter the captcha');
+    } else if (captchaInput !== captcha) {
+      setCaptchaError('Captcha does not match');
+    } else {
+      setCaptchaError('');
+    }
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return Object.keys(newErrors).length === 0 && !captchaError;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Clear previous messages
     setMessage('');
     setMessageType('');
-    
     if (!validateForm()) {
-      // Show validation error message
       setMessage('Please fix the errors below before submitting.');
       setMessageType('danger');
       return;
     }
-
+    // Only submit if captcha is verified
+    if (captchaInput !== captcha) {
+      setCaptchaError('Captcha does not match');
+      return;
+    }
     setLoading(true);
-
     try {
-  const result = await register(formData.name, formData.email, formData.phone, formData.password);
-      
+      const result = await register(formData.name, formData.email, formData.phone, formData.password);
       if (result.success) {
         setMessage(result.message);
         setMessageType('success');
-        // Clear form
         setFormData({
           name: '',
           email: '',
@@ -100,34 +114,25 @@ const Register = () => {
           password: '',
           confirmPassword: ''
         });
-        // Redirect to login after 2 seconds
         setTimeout(() => {
           navigate('/login');
         }, 2000);
       } else {
-        // Display the exact API error message with details
         let errorMessage = result.message;
-        
-        // Handle if the message is an array of errors
         if (Array.isArray(errorMessage)) {
           errorMessage = errorMessage.join(', ');
         }
-        
-        // If there are validation details, create a more user-friendly error display
         if (result.details && Array.isArray(result.details)) {
           const detailedErrors = result.details.map(detail => {
             const fieldName = detail.path ? detail.path.charAt(0).toUpperCase() + detail.path.slice(1) : 'Field';
             return `• ${fieldName}: ${detail.msg || detail.message || 'Invalid value'}`;
           }).join('\n');
-          
           errorMessage = result.message ? `${result.message}\n\n${detailedErrors}` : detailedErrors;
         }
-        
         setMessage(errorMessage);
         setMessageType('danger');
       }
     } catch (error) {
-      console.error('Registration error:', error);
       setMessage('An unexpected error occurred. Please try again.');
       setMessageType('danger');
     } finally {
@@ -149,6 +154,7 @@ const Register = () => {
             )}
 
             <form onSubmit={handleSubmit}>
+       
               <div className="mb-3">
                 <label htmlFor="phone" className="form-label">
                   Phone Number
@@ -250,6 +256,23 @@ const Register = () => {
                   <div className="invalid-feedback d-block">
                     {errors.confirmPassword}
                   </div>
+                )}
+              </div>
+
+                     <div className="mb-3">
+                <label className="form-label">Captcha</label>
+                <CaptchaCanvas onCaptchaGenerated={setCaptcha} />
+                <input
+                  type="text"
+                  className={`form-control ${captchaError ? 'is-invalid' : ''}`}
+                  name="captchaInput"
+                  value={captchaInput}
+                  onChange={handleChange}
+                  placeholder="Enter the captcha text"
+                  autoComplete="off"
+                />
+                {captchaError && (
+                  <div className="invalid-feedback d-block">{captchaError}</div>
                 )}
               </div>
 

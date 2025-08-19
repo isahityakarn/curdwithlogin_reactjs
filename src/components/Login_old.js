@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
+import CaptchaCanvas from './CaptchaCanvas';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const [captcha, setCaptcha] = useState('');
+  const [captchaInput, setCaptchaInput] = useState('');
+  const [captchaError, setCaptchaError] = useState('');
   const navigate = useNavigate();
   const { loginWithOtp } = useAuth();
   const [formData, setFormData] = useState({ identifier: '' });
@@ -15,14 +19,27 @@ const Login = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }));
+    if (name === 'captchaInput') {
+      setCaptchaInput(value);
+      if (captchaError) setCaptchaError('');
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+      if (errors[name]) {
+        setErrors((prev) => ({ ...prev, [name]: '' }));
+      }
     }
   };
 
   const validateForm = () => {
     const newErrors = {};
+    // Captcha validation
+    if (!captchaInput) {
+      setCaptchaError('Please enter the captcha');
+    } else if (captchaInput !== captcha) {
+      setCaptchaError('Captcha does not match');
+    } else {
+      setCaptchaError('');
+    }
     if (loginType === 'email') {
       if (!formData.identifier) {
         newErrors.identifier = 'Email is required';
@@ -45,6 +62,10 @@ const Login = () => {
     setMessage('');
     if (!validateForm()) {
       setMessage('Please fix the errors below before submitting.');
+      return;
+    }
+    if (captchaInput !== captcha) {
+      setCaptchaError('Captcha does not match');
       return;
     }
     setLoading(true);
@@ -79,6 +100,10 @@ const Login = () => {
     setMessage('');
     if (!otp) {
       setMessage('Please enter the OTP.');
+      return;
+    }
+    if (captchaInput !== captcha) {
+      setCaptchaError('Captcha does not match');
       return;
     }
     setLoading(true);
@@ -128,7 +153,6 @@ const Login = () => {
                   <label htmlFor="identifier" className="form-label">
                     {loginType === 'email' ? 'Email Address' : 'Phone Number'}
                   </label>
-
                   <div className="input-group">
                     <span
                       className="input-group-text bg-white"
@@ -160,11 +184,9 @@ const Login = () => {
                         <path d="M1.5 6.5l6 6 6-6" stroke="gray" strokeWidth="2" fill="none" />
                       </svg>
                     </span>
-
                     <input
                       type={loginType === 'email' ? 'email' : 'tel'}
-                      className={`form-control ${errors.identifier ? 'is-invalid' : ''
-                        }`}
+                      className={`form-control ${errors.identifier ? 'is-invalid' : ''}`}
                       id="identifier"
                       name="identifier"
                       value={formData.identifier}
@@ -177,14 +199,31 @@ const Login = () => {
                       autoComplete={loginType === 'email' ? 'email' : 'tel'}
                     />
                   </div>
-
                   {errors.identifier && (
                     <div className="invalid-feedback d-block">
                       {errors.identifier}
                     </div>
                   )}
                 </div>
-
+                {/* Only show captcha if OTP is not sent */}
+                {!otpSent && (
+                  <div className="mb-3">
+                    <label className="form-label">Captcha</label>
+                    <CaptchaCanvas onCaptchaGenerated={setCaptcha} />
+                    <input
+                      type="text"
+                      className={`form-control ${captchaError ? 'is-invalid' : ''}`}
+                      name="captchaInput"
+                      value={captchaInput}
+                      onChange={handleChange}
+                      placeholder="Enter the captcha text"
+                      autoComplete="off"
+                    />
+                    {captchaError && (
+                      <div className="invalid-feedback d-block">{captchaError}</div>
+                    )}
+                  </div>
+                )}
                 <button
                   type="submit"
                   className="btn btn-primary w-100"
