@@ -62,11 +62,11 @@ const Login = () => {
       const result = await response.json();
       console.log('welcome : ' + formData.identifier);
 
-      if (result.message) {
+      if (result.success === true) {
         setMessage('OTP sent successfully!');
         setOtpSent(true);
       } else {
-        setMessage('Failed to send OTP.');
+        setMessage(result.message || 'Failed to send OTP.');
       }
     } catch (error) {
       setMessage('An error occurred. Please try again.');
