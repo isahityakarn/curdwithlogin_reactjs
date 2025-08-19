@@ -52,6 +52,11 @@ export default function generateNocPdf() {
   doc.setFontSize(14);
   doc.setFont(undefined, 'bold');
   doc.text('No Objection Certificate', pageWidth / 2, titleY, { align: 'center' });
+  // Add QR image to the left of the title
+  const qrSize = 18;
+  // Position QR so its bottom is 3 units below the title baseline
+  const qrY = titleY + 3 - qrSize;
+  doc.addImage(qrImg, 'JPEG', 12, qrY, qrSize, qrSize);
   doc.setFont(undefined, 'normal');
   doc.setFontSize(10);
     // Add today's date on the right side of the header
@@ -149,6 +154,6 @@ export default function generateNocPdf() {
   const today = new Date();
   const dateStr = today.getDate().toString().padStart(2, '0') + '/' +
     (today.getMonth() + 1).toString().padStart(2, '0') + '/' + today.getFullYear();
-  doc.text('Date: ' + dateStr, rightX, y, { align: 'right' });
+  // doc.text('Date: ' + dateStr, rightX, y, { align: 'right' });
   doc.save('No_Objection_Certificate.pdf');
 }
