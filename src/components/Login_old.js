@@ -218,6 +218,11 @@ const Login = () => {
                 </button>
               </form>
             )}
+              {/* Register link added below */}
+              <div className="text-center mt-3">
+                <span>Don't have an account? </span>
+                <a href="/register" className="btn btn-link p-0">Register here</a>
+              </div>
           </div>
         </div>
       </div>

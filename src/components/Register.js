@@ -6,6 +6,7 @@ const Register = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '',
     password: '',
     confirmPassword: ''
   });
@@ -47,6 +48,12 @@ const Register = () => {
       newErrors.email = 'Email is invalid';
     }
 
+    if (!formData.phone) {
+      newErrors.phone = 'Phone number is required';
+    } else if (!/^\d{10}$/.test(formData.phone)) {
+      newErrors.phone = 'Phone number must be 10 digits';
+    }
+
     if (!formData.password) {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 6) {
@@ -80,7 +87,7 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const result = await register(formData.name, formData.email, formData.password);
+  const result = await register(formData.name, formData.email, formData.phone, formData.password);
       
       if (result.success) {
         setMessage(result.message);
@@ -89,6 +96,7 @@ const Register = () => {
         setFormData({
           name: '',
           email: '',
+          phone: '',
           password: '',
           confirmPassword: ''
         });
@@ -141,6 +149,26 @@ const Register = () => {
             )}
 
             <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <label htmlFor="phone" className="form-label">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  className={`form-control ${errors.phone ? 'is-invalid' : ''}`}
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="Enter your phone number"
+                  autoComplete="tel"
+                />
+                {errors.phone && (
+                  <div className="invalid-feedback d-block">
+                    {errors.phone}
+                  </div>
+                )}
+              </div>
               <div className="mb-3">
                 <label htmlFor="name" className="form-label">
                   Full Name
