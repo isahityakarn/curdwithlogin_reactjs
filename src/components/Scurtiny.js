@@ -2,52 +2,66 @@ import React from 'react';
 import './Scurtiny.css';
 
 const Scurtiny = () => {
-    console.log("hello");
-    
   return (
     <div className="scurtiny-report">
-      <h2 className="report-title">ITI NAME Along with Address</h2>
       <table className="report-table">
         <thead>
           <tr>
-            <th colSpan="6">Application Timeline</th>
+            <th colSpan="5" style={{ background: '#d3d3d3', fontSize: '17px', padding: 0 }}>
+              ITI NAME Along with Address 
+            </th>
+            <th colSpan="2" style={{ background: '#d3d3d3', fontSize: '17px', padding: 0 }}>
+               Application Timeline
+            </th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Application No.</td>
-            <td>MIS Code (If Available)</td>
-            <td>State</td>
-            <td>Type of application</td>
-            <td>Grading</td>
-            <td>Session</td>
+            <th>Application No.</th>
+            <td style={{ width: '220px' }}>MIS Code (If Available)</td>
+            <th>State</th>
+            <th>Type of application</th>
+            <th>Grading</th>
+            <th colSpan={2}>Session</th>
+          
           </tr>
           <tr>
             <td></td>
             <td></td>
             <td>UTTAR PRADES</td>
-            <td>Category of Application(New/Existing)</td>
+            <td colSpan={2}>Category of Application(New/Existing)</td>
             <td></td>
-            <td></td>
+           
           </tr>
           <tr>
-            <td colSpan="6" className="section-title">Member of Inspection cumverification committee (ICVC )/Report Submitted On NIMI PORTAL</td>
+            <td colSpan="7" className="section-title">Member of Inspection cumverification committee (ICVC )/Report Submitted On NIMI PORTAL</td>
           </tr>
           <tr>
+            <td rowSpan={2}>Inspection Details</td>
+            <td colSpan={5}>Member of Inspection cumverification committee (ICVC )/Report Submitted On NIMI PORTAL</td>
+            
+            <td rowSpan={2}>Date of Inspection</td>
+         
+          </tr>
+          <tr>
+           
             <td>NCVT</td>
             <td>SCVT</td>
             <td>NODAL</td>
             <td>INST.</td>
             <td>IND.</td>
-            <td>Date of Inspection</td>
+           
+         
           </tr>
           <tr>
+              <td>Name</td>
             <td>Name, Contact No.</td>
             <td>Name, Contact No.</td>
             <td>Name, Contact No.</td>
             <td>Name, Contact No.</td>
             <td>Name, Contact No.</td>
-            <td>DD/MM/YY</td>
+            <td rowSpan={2}>DD/MM/YY</td>
+          
           </tr>
           <tr>
             <td>Report submitted</td>
@@ -56,33 +70,35 @@ const Scurtiny = () => {
             <td>yes/no (View Report)</td>
             <td>yes/no (View Report)</td>
             <td>yes/no (View Report)</td>
+          
           </tr>
           <tr>
-            <td colSpan="6" className="section-title">Existing Trade Units Affiliation as per NCVT portal/Affiliated Units</td>
+            <th colSpan="3" className="">Existing Trade Units Affiliation as per NCVT portal/Affiliated Units</th>
+             <td colSpan="4">Electrician - 6(2+2+2)<br/>Fitter - 6(2+2+2)</td>
           </tr>
-          <tr>
-            <td colSpan="6">Electrician - 6(2+2+2)<br/>Fitter - 6(2+2+2)</td>
-          </tr>
+        
           <tr>
             <td>Land as per norms</td>
             <td>Building as per norms</td>
             <td>Power connection as per norms</td>
             <td>Machinery as Per Norms</td>
             <td>IT Lab</td>
-            <td>Multipurpose Hall</td>
+            <td colSpan={2}>Multipurpose Hall</td>
+         
           </tr>
-          <tr className="highlight-row">
+          <tr style={{ background: '#ffff66' }}>
             <td>YES/NO (Remark Option)</td>
             <td>YES/NO (Remark Option)</td>
             <td>YES/NO (Remark Option)</td>
             <td>YES/NO (Remark Option)</td>
             <td>YES/NO (Remark Option)</td>
-            <td>YES/NO (Remark Option)</td>
+            <td colSpan={2}>YES/NO (Remark Option)</td>
+
           </tr>
         </tbody>
       </table>
 
-      <h3 className="section-title">Remarks of ICVC Committee</h3>
+      <h3 className="section-title" style={{ background: '#d3d3d3', marginTop: '20px' }}>Remarks of ICVC Committee</h3>
       <table className="report-table">
         <thead>
           <tr>
@@ -114,8 +130,8 @@ const Scurtiny = () => {
         </tbody>
       </table>
 
-      <h3 className="section-title">Remarks of TC Section</h3>
-      <div className="remark-option">Remark Option</div>
+      <h3 className="section-title" style={{ background: '#d3d3d3', marginTop: '20px' }}>Remarks of TC Section</h3>
+      <div className="remark-option" style={{ background: '#ffff66', padding: '10px' }}>Remark Option</div>
     </div>
   );
 };
