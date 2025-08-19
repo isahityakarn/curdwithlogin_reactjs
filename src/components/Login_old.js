@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -14,12 +13,11 @@ const Login = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState('');
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: '' }));
     }
   };
 
@@ -51,18 +49,18 @@ const Login = () => {
     }
     setLoading(true);
     try {
-      const bodyData = loginType === 'email'
-        ? { email: formData.identifier, type: loginType }
-        : { phone: formData.identifier, type: loginType };
+      const bodyData =
+        loginType === 'email'
+          ? { email: formData.identifier, type: loginType }
+          : { phone: formData.identifier, type: loginType };
+
       const response = await fetch('http://localhost:5050/api/login/loginwithotp', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(bodyData)
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData),
       });
       const result = await response.json();
-      console.log("welcome : "+formData.identifier);
+      console.log('welcome : ' + formData.identifier);
 
       if (result.message) {
         setMessage('OTP sent successfully!');
@@ -76,7 +74,6 @@ const Login = () => {
     setLoading(false);
   };
 
-  // OTP verification handler
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
     setMessage('');
@@ -86,14 +83,17 @@ const Login = () => {
     }
     setLoading(true);
     try {
-      const bodyData = loginType === 'email'
-        ? { email: formData.identifier, otp, type: loginType }
-        : { phone: formData.identifier, otp, type: loginType };
+      const bodyData =
+        loginType === 'email'
+          ? { email: formData.identifier, otp, type: loginType }
+          : { phone: formData.identifier, otp, type: loginType };
+
       const response = await fetch('http://localhost:5050/api/login/verifylogin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bodyData)
+        body: JSON.stringify(bodyData),
       });
+
       const data = await response.json();
       if (data.message) {
         setMessage('Login successful!');
@@ -128,38 +128,63 @@ const Login = () => {
                   <label htmlFor="identifier" className="form-label">
                     {loginType === 'email' ? 'Email Address' : 'Phone Number'}
                   </label>
+
                   <div className="input-group">
-                    <select
-                      id="loginType"
-                      className="form-select"
-                      style={{ maxWidth: '120px' }}
-                      value={loginType}
-                      onChange={e => {
-                        setLoginType(e.target.value);
+                    <span
+                      className="input-group-text bg-white"
+                      style={{ cursor: 'pointer', padding: '0.25rem 0.5rem' }}
+                      onClick={() => {
+                        setLoginType(loginType === 'email' ? 'phone' : 'email');
                         setFormData(prev => ({ ...prev, identifier: '' }));
                         setErrors({});
                       }}
+                      title={`Switch to ${loginType === 'email' ? 'phone' : 'email'} login`}
                     >
-                      <option value="email">&#x2709;</option>
-                      <option value="phone">&#x1F4F1;</option>
-                    </select>
+                      <img
+                        src={
+                          loginType === 'email'
+                            ? process.env.PUBLIC_URL + '/header/email.png'
+                            : process.env.PUBLIC_URL + '/header/phone.png'
+                        }
+                        alt={loginType === 'email' ? 'Email' : 'Phone'}
+                        style={{ width: 40, height: 40 }}
+                      />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        fill="gray"
+                        style={{ marginLeft: '4px', verticalAlign: 'middle' }}
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M1.5 6.5l6 6 6-6" stroke="gray" strokeWidth="2" fill="none" />
+                      </svg>
+                    </span>
+
                     <input
                       type={loginType === 'email' ? 'email' : 'tel'}
-                      className={`form-control ${errors.identifier ? 'is-invalid' : ''}`}
+                      className={`form-control ${errors.identifier ? 'is-invalid' : ''
+                        }`}
                       id="identifier"
                       name="identifier"
                       value={formData.identifier}
                       onChange={handleChange}
-                      placeholder={loginType === 'email' ? 'Enter your email' : 'Enter your phone number'}
+                      placeholder={
+                        loginType === 'email'
+                          ? 'Enter your email'
+                          : 'Enter your phone number'
+                      }
                       autoComplete={loginType === 'email' ? 'email' : 'tel'}
                     />
                   </div>
+
                   {errors.identifier && (
                     <div className="invalid-feedback d-block">
                       {errors.identifier}
                     </div>
                   )}
                 </div>
+
                 <button
                   type="submit"
                   className="btn btn-primary w-100"
@@ -171,41 +196,32 @@ const Login = () => {
             ) : (
               <form onSubmit={handleVerifyOtp}>
                 <div className="mb-3">
-                  <label htmlFor="otp" className="form-label">Enter OTP</label>
+                  <label htmlFor="otp" className="form-label">
+                    Enter OTP
+                  </label>
                   <input
                     type="text"
                     className="form-control"
                     id="otp"
                     name="otp"
                     value={otp}
-                    onChange={e => setOtp(e.target.value)}
+                    onChange={(e) => setOtp(e.target.value)}
                     placeholder="Enter OTP"
                   />
                 </div>
-                <button type="submit" className="btn btn-success w-100" disabled={loading}>
+                <button
+                  type="submit"
+                  className="btn btn-success w-100"
+                  disabled={loading}
+                >
                   {loading ? 'Verifying...' : 'Verify OTP & Login'}
                 </button>
               </form>
             )}
-
-            <div className="text-center mt-3">
-              <p className="mb-2">
-                <Link to="/forgot-password" className="text-decoration-none">
-                  Forgot your password?
-                </Link>
-              </p>
-              <p className="mb-0">
-                Don't have an account?{' '}
-                <Link to="/register" className="text-decoration-none">
-                  Register here
-                </Link>
-              </p>
-            </div>
           </div>
         </div>
       </div>
     </div>
   );
 };
-
 export default Login;
